@@ -1,5 +1,5 @@
 ********************************************************************************
-安装arm-linux-guneabihf
+///////////////////////安装arm-linux-guneabihf//////////////////////////////////
 ********************************************************************************
 下载工具集：
 [warriorlious@hangzhou]$ git clone https://github.com/warriorlious/tools.git
@@ -9,34 +9,62 @@
 [warriorlious@hangzhou]$ PATH=$PATH:/usr/local/arm-linux-gnueabinhf/bin
 更新环境变量：
 source /etc/profile
+
+
 *********************************************************************************
-编译u-boot
+ ////////////////////////////// 编译u-boot///////////////////////////////////////
 *********************************************************************************
 下载u-boot:
 [warriorlious@hangzhou]$ git clone https://github.com/warriorlious/u-boot-suxi.git
 编译u-boot:
 [warriorlious@hangzhou]$ make cubieboard CROSS_COMPILE=arm-linux-gnueabi-
-编译成功u-boot
-生成spl/u-boot-spl.bin
+编译成功u-boot将得到：
+spl/u-boot-spl.bin
 
-得到的tools目录为工具，mkimage将用于内核编译，可将其连接到/usr/bin
+tools目录为工具，mkimage将用于内核编译，可将其连接到/usr/bin
 
-************************************************************************
-编译sunxi-tools-master
-直接make发现未找到库libusb.h
-于是安装libusb*
-安装了5个包
-make成功得到fex2bin
 
-**************************************************************************
-sunxi-boards
-这个是配置文件
+
+**********************************************************************************
+/////////////////////////////获得sunxi-tools/////////////////////////////////////
+**********************************************************************************
+下载suxi-tools:
+[warriorlious@hangzhou]$ git clone https://github.com/warriorlious/suxi-tools.git
+编译suxi-tools:
+[warriorlious@hangzhou]$ make
+提示libusb.h没有找到，解决方法：
+[warriorlious@hangzhou]$ yum install libusb-*
+将安装提示安装libusb-devel、libusb-static、libusb-devel-doc，都安装上。
+
+make成功得到fex2bin工具，
+
+
+
+**********************************************************************************
+/////////////////////////获得sunxi-boards配置文件/////////////////////////////////
+***********************************************************************************
+下载suxi-boards:
+[warriorlious@hangzhou]$ git clone https://github.com/warriorlious/suxi-boards.git
+
+这个是些配置文件
 在A10目录中找到cubieboard_1gb.fex
 
-使用上一步骤得到的fex2bin
-fex2bin cubeboard_1gb.fex script.bin
 
-***************************************************************************
+
+***********************************************************************************
+/////////////////////////制作script.bin///////////////////////////////////////////
+***********************************************************************************
+使用上上个步骤得到的fex2bin制作：
+[warriorlious@hangzhou]$ fex2bin cubeboard_1gb.fex script.bin
+
+
+
+***********************************************************************************
+/////////////////////////编译内核//////////////////////////////////////////////////
+***********************************************************************************
+下载源码：
+[warriorlious@hangzhou]$ git clone https://github.com/warriouslious/linux-sunxi.git
+
 编译内核
 进行配置设置：
 make ARCH=arm sun4i_defconfig
