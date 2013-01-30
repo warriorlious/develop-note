@@ -1,16 +1,9 @@
-拿到cubieboard源码后编译发现错误:
- arm-linux-gnueabihf-gcc：命令未找到
-于是寻找交叉编译工具，发现这个工具链好像存在于ubuntu居多。
-试图寻找源码自己编译。发现了linaro这个联合公司www.linaro.org
 
-yum install arm-linux-*
-安装完成。
+********************************************************************************
+安装arm-linux-guneabihf
+********************************************************************************
+git clone https://github.com/warriorlious/tools.git
 
-由于后来装了系统,yum再也没有arm-linux-了，
-在网上找了个arm-linux-gcc-4.3.2.tgz
-用这个编译连接的时候出错了。怀疑不是这个编译器。
-
-换成arm-2011.09-70-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2
 使用make cubieboard CROSS_COMPILE=arm-none-linux-gnueabi-
 编译成功u-boot
 生成spl/u-boot-spl.bin
