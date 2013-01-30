@@ -67,29 +67,37 @@ make成功得到fex2bin工具，
 
 编译内核
 进行配置设置：
-make ARCH=arm sun4i_defconfig
+[warriorlious@hangzhou]$ make ARCH=arm sun4i_defconfig
+
 配置内核：
-make ARCH=arm menuconfig
+[warriorlious@hangzhou]$ make ARCH=arm menuconfig
+假如终端无法加载menu提示 ...requires the ncurses libraries,安装ncurses库：
+[warriorliious@hangzhou]$ yum install ncurses-devel
+再次运行menuconfig
+
 编译uImage:
-make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- -j4 uImage
+[warriorlious@hangzhou]$ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4 uImage
+
 编译驱动模块：
-make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- -j4 INSTALL_MODPATH=output modules
+[warriorlious@hangzhou]$ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4 INSTALL_MODPATH=output modules
+
 安装内核模块：
-make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- -j4 INSTALL_MODPATH=output modules_install
+[warriorlious@hangzhou]$ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4 INSTALL_MODPATH=output modules_install
 
-*****************************************************************************
-制作SD启动卡：
 
+************************************************************************************
+///////////////////////////制作SD启动卡////////////////////////////////////////////
+************************************************************************************
 1M的区域填充为0,预留给 u‐boot 和 spl/sunxi‐spl.bin:
-dd if=/dev/zero of=/dev/sdc bs=1M count=1
+[warriouslious@hangzhou]$ dd if=/dev/zero of=/dev/sdc bs=1M count=1
 
-重新读取/dev/sdb,因为我们已经改变了sdc:
-sfdisk -R /dev/sdc
+重新读取/dev/sdc,因为我们已经改变了sdc:
+[warriouslious@hangzhou]$ sfdisk -R /dev/sdc
 
 对sd卡进行分区,具体请参照sfdisk命令手册
-cat <<EOT | sfdisk -uM /dev/sdc
+[warriouslious@hangzhou]$ cat <<EOT | sfdisk -uM /dev/sdc
 > 1,16,c        #从SD卡的1M处开始,划分16M长度为第一个分区
-> 23,,L         #余下的空间为第二个分区 (参考网站上使用的是 17,,L,这是错误的,重>叠了)
+> 23,,L         #余下的空间为第二个分区 (参考网站上使用的是 17,,L,这是错误的,重叠了)
 > EOT
 
 格式化为fat
