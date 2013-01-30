@@ -89,10 +89,10 @@ make成功得到fex2bin工具，
 ///////////////////////////制作SD启动卡////////////////////////////////////////////
 ************************************************************************************
 1M的区域填充为0,预留给 u‐boot 和 spl/sunxi‐spl.bin:
-[warriouslious@hangzhou]$ dd if=/dev/zero of=/dev/sdc bs=1M count=1
+[warriorlious@hangzhou]$ dd if=/dev/zero of=/dev/sdc bs=1M count=1
 
 重新读取/dev/sdc,因为我们已经改变了sdc:
-[warriouslious@hangzhou]$ sfdisk -R /dev/sdc
+[warriorlious@hangzhou]$ sfdisk -R /dev/sdc
 
 对sd卡进行分区,具体请参照sfdisk命令手册
 [warriouslious@hangzhou]$ cat <<EOT | sfdisk -uM /dev/sdc
@@ -100,37 +100,36 @@ make成功得到fex2bin工具，
 > 23,,L         #余下的空间为第二个分区 (参考网站上使用的是 17,,L,这是错误的,重叠了)
 > EOT
 
-格式化为fat
-mkfs.vfat /dev/sdc1
-格式化为ext4
-mkfs.ext4 /dev/sdc2
+格式化sdc1为fat
+[warriorlious@hangzhou]$ mkfs.vfat /dev/sdc1
+格式化sdc2为ext4
+[warriorlious@hangzhou]$ mkfs.ext4 /dev/sdc2
 
 u-boot路径下：
-cp spl/u-boot-spl.bin spl/suxi-spl.bin
+[warriorlious@hangzhou]$ cp spl/u-boot-spl.bin spl/suxi-spl.bin
 
 写入bootloader:
-dd if=spl/suxi-spl.bin of=/dev/sdc bs=1024 seek=8
-dd if=u-boot.bin of=/dev/sdc bs=1024 seek=32
+[warriorlious@hangzhou]$ dd if=spl/suxi-spl.bin of=/dev/sdc bs=1024 seek=8
+[warriorlious@hangzhou]$ dd if=u-boot.bin of=/dev/sdc bs=1024 seek=32
 
 
 安装uImage:
-
-mount /dev/sdc1 /mnt
-mkdir /mnt/boot
-cp ../linux-sunxi/arch/arm/boot/uImage /mnt/boot
-cp ../../sunxi-tools-master/script.bin /mnt/boot
+[warriorlious@hangzhou]$ mount /dev/sdc1 /mnt
+[warriorlious@hangzhou]$ mkdir /mnt/boot
+[warriorlious@hangzhou]$ cp ../linux-sunxi/arch/arm/boot/uImage /mnt/boot
+[warriorlious@hangzhou]$ cp ../../sunxi-tools-master/script.bin /mnt/boot
 
 设置启动参数：
-vim ~/boot.cmd
+[warriorlious@hangzhou]$ cat>boot.cmd<<EOF
+>setenv bootargs bootargs console=ttyS0,115200 noinitrd init=/init root=/dev/mmcblk0p2 rootfstype=ext4 rootwait panic=10 ${extra}
+>fatload mmc 0 0x43000000 boot/script.bin
+>fatload mmc 0 0x48000000 boot/uImage
+>bootm 0x48000000
+>EOF
 
-setenv bootargs bootargs console=ttyS0,115200 noinitrd init=/init root=/dev/mmcblk0p2 rootfstype=ext4 rootwait panic=10 ${extra}
-fatload mmc 0 0x43000000 boot/script.bin
-fatload mmc 0 0x48000000 boot/uImage
-bootm 0x48000000
+生成boot.scr文件:
+[warriorlious@hangzhou]$ mkimage -C none -A arm -T script -d boot.cmd boot.scr
 
-生成boot.scr文件
-cd
-mkimage -C none -A arm -T script -d boot.cmd boot.scr
-
-cp boot.scr /mnt
+拷贝boot项到SD卡：
+[warriorlious@hangzhou]$ cp boot.scr /mnt
 
