@@ -1,10 +1,21 @@
-
 ********************************************************************************
 安装arm-linux-guneabihf
 ********************************************************************************
-git clone https://github.com/warriorlious/tools.git
-
-使用make cubieboard CROSS_COMPILE=arm-none-linux-gnueabi-
+下载工具集：
+[warriorlious@hangzhou]$ git clone https://github.com/warriorlious/tools.git
+配置工具链：
+[warriorlious@hangzhou]$ cp tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/ /usr/local/arm-linux-gnueabihf -Rv
+/etc/profile 添加一行：
+[warriorlious@hangzhou]$ PATH=$PATH:/usr/local/arm-linux-gnueabinhf/bin
+更新环境变量：
+source /etc/profile
+*********************************************************************************
+编译u-boot
+*********************************************************************************
+下载u-boot:
+[warriorlious@hangzhou]$ git clone https://github.com/warriorlious/u-boot-suxi.git
+编译u-boot:
+[warriorlious@hangzhou]$ make cubieboard CROSS_COMPILE=arm-linux-gnueabi-
 编译成功u-boot
 生成spl/u-boot-spl.bin
 
